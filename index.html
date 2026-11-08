@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Анна & Михаил — приглашение на свадьбу</title>
+<meta name="description" content="Приглашаем вас разделить с нами самый счастливый день — 12 июня 2027">
+<meta name="theme-color" content="#4a5233">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Marck+Script&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --olive-900: #2f3420;
+    --olive-800: #3b4129;
+    --olive-700: #4a5233;
+    --olive-600: #586140;
+    --olive-500: #69734e;
+    --beige-50: #faf6ee;
+    --beige-100: #f3ede1;
+    --beige-200: #e8dfcc;
+    --gold-300: #e6d7b5;
+    --gold-500: #c3ab7a;
+    --gold-700: #8f7748;
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --script: "Marck Script", cursive;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: var(--serif);
+    background: var(--beige-100);
+    color: var(--olive-800);
+    font-size: 19px;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+  body.locked { overflow: hidden; height: 100vh; }
+
+  /* ---------------- ENVELOPE ---------------- */
+  .envelope {
+    position: fixed; inset: 0; z-index: 50;
+    background: var(--olive-800);
+    overflow: hidden;
+    perspective: 1600px;
+  }
+  .envelope.gone { display: none; }
+  .flap-wrap { position: absolute; inset: 0; transition: transform 1.3s cubic-bezier(.7,0,.2,1), opacity 1.3s; will-change: transform; }
+  .flap {
+    position: absolute; inset: 0;
+    background-color: var(--olive-600);
+    background-size: 520px 520px;
+  }
+  .flap-left  .flap { clip-path: polygon(0 0, 9% 0, 50% 46%, 50% 54%, 9% 100%, 0 100%); background-color: #545d3c; background-position: 0 0; }
+  .flap-right .flap { clip-path: polygon(100% 0, 91% 0, 50% 46%, 50% 54%, 91% 100%, 100% 100%); background-color: #545d3c; background-position: 210px 140px; }
+  .flap-top   { filter: drop-shadow(0 6px 10px rgba(20,24,12,.45)); }
+  .flap-top   .flap { clip-path: polygon(9% 0, 91% 0, 50% 47%); background-color: #5d6744; background-position: 90px 30px; }
+  .flap-bottom { filter: drop-shadow(0 -6px 10px rgba(20,24,12,.4)); }
+  .flap-bottom .flap { clip-path: polygon(50% 52%, 91% 100%, 9% 100%); background-color: #5a6441; background-position: 300px 260px; }
+
+  .envelope.open .flap-top    { transform: translateY(-105%); }
+  .envelope.open .flap-bottom { transform: translateY(105%); }
+  .envelope.open .flap-left   { transform: translateX(-105%); }
+  .envelope.open .flap-right  { transform: translateX(105%); }
+  .envelope.open { background: transparent; transition: background .6s .5s; }
+
+  .seal {
+    position: absolute; left: 50%; top: 49%;
+    width: min(38vw, 210px); aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border: 0; background: none; cursor: pointer;
+    filter: drop-shadow(0 10px 14px rgba(15,18,8,.55)) drop-shadow(0 2px 3px rgba(15,18,8,.4));
+    transition: transform .6s cubic-bezier(.5,0,.3,1), opacity .5s;
+    animation: breathe 3.2s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .seal svg { width: 100%; height: 100%; display: block; }
+  .seal:focus-visible { outline: 2px solid var(--gold-300); outline-offset: 8px; border-radius: 50%; }
+  @keyframes breathe { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-50%) scale(1.035); } }
+  .envelope.open .seal { animation: none; transform: translate(-50%,-50%) scale(.2) rotate(-25deg); opacity: 0; }
+
+  .env-text {
+    position: absolute; left: 0; right: 0; bottom: 9vh;
+    text-align: center; color: var(--beige-50);
+    text-shadow: 0 2px 12px rgba(15,18,8,.55);
+    pointer-events: none;
+    transition: opacity .5s;
+    padding: 0 16px;
+  }
+  .env-text .names { font-size: clamp(40px, 11vw, 72px); line-height: 1; font-weight: 400; letter-spacing: .02em; }
+  .env-text .sub { font-family: var(--script); font-size: clamp(26px, 7vw, 44px); line-height: 1.1; margin-top: 6px; }
+  .env-text .hint { font-size: 17px; letter-spacing: .25em; text-transform: uppercase; margin-top: 18px; opacity: .85; animation: hint 2.4s ease-in-out infinite; }
+  @keyframes hint { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
+  .envelope.open .env-text { opacity: 0; }
+
+  /* ---------------- INVITATION ---------------- */
+  main { position: relative; }
+  section { padding: 84px 16px; text-align: center; position: relative; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h2 { font-family: var(--script); font-weight: 400; font-size: clamp(40px, 10vw, 56px); line-height: 1.1; color: var(--olive-700); margin-bottom: 26px; }
+  .lead { font-size: 21px; }
+  .muted { color: var(--olive-500); }
+
+  .divider { display: block; width: 180px; height: 28px; margin: 28px auto; color: var(--gold-500); }
+
+  .hero {
+    min-height: 100vh; min-height: 100svh;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--olive-700);
+    color: var(--beige-50);
+    overflow: hidden;
+  }
+  .hero .bg { position: absolute; inset: 0; background-size: 520px 520px; opacity: .9; }
+  .hero .wrap { position: relative; }
+  .hero .pre { letter-spacing: .3em; text-transform: uppercase; font-size: 15px; opacity: .85; }
+  .hero h1 { font-weight: 400; font-size: clamp(54px, 15vw, 104px); line-height: .95; margin: 26px 0 10px; }
+  .hero h1 .amp { display: block; font-family: var(--script); font-size: .6em; color: var(--gold-300); margin: 6px 0; }
+  .hero .date { font-size: clamp(22px, 6vw, 30px); letter-spacing: .18em; margin-top: 22px; }
+  .hero .divider { color: var(--gold-300); }
+  .scroll-cue { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); width: 22px; height: 36px; border: 1.5px solid rgba(250,246,238,.6); border-radius: 12px; }
+  .scroll-cue::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: var(--beige-50); animation: cue 1.8s infinite; }
+  @keyframes cue { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
+
+  .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 460px; margin: 30px auto 0; }
+  .countdown div { border: 1px solid var(--gold-500); border-radius: 999px 999px 12px 12px; padding: 18px 4px 10px; background: var(--beige-50); }
+  .countdown b { display: block; font-size: clamp(30px, 8vw, 40px); font-weight: 500; line-height: 1; color: var(--olive-700); font-variant-numeric: tabular-nums; }
+  .countdown span { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--olive-500); }
+
+  .timeline { list-style: none; max-width: 420px; margin: 0 auto; position: relative; text-align: left; }
+  .timeline::before { content: ""; position: absolute; left: 88px; top: 8px; bottom: 8px; width: 1px; background: var(--gold-500); }
+  .timeline li { display: grid; grid-template-columns: 68px 1fr; gap: 42px; padding: 12px 0; position: relative; }
+  .timeline li::before { content: ""; position: absolute; left: 83px; top: 22px; width: 11px; height: 11px; border-radius: 50%; background: var(--beige-100); border: 1.5px solid var(--gold-700); }
+  .timeline time { font-size: 24px; font-weight: 600; color: var(--olive-700); text-align: right; padding-right: 4px; }
+  .timeline strong { display: block; font-size: 22px; font-weight: 600; }
+  .timeline p { color: var(--olive-500); font-size: 18px; }
+
+  .venue-card { background: var(--beige-50); border: 1px solid var(--beige-200); border-radius: 220px 220px 18px 18px; padding: 70px 24px 36px; box-shadow: 0 18px 40px -24px rgba(47,52,32,.35); }
+  .venue-card h3 { font-size: 30px; font-weight: 500; line-height: 1.15; margin-bottom: 8px; }
+  .btn {
+    display: inline-block; margin: 22px 6px 0; padding: 14px 28px;
+    font: inherit; font-size: 17px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--beige-50); background: var(--olive-700);
+    border: 0; border-radius: 999px; cursor: pointer; text-decoration: none;
+    transition: background .25s, transform .25s;
+  }
+  .btn:hover { background: var(--olive-800); transform: translateY(-1px); }
+  .btn.ghost { background: transparent; color: var(--olive-700); border: 1px solid var(--olive-700); }
+  .btn.ghost:hover { background: var(--olive-700); color: var(--beige-50); }
+
+  .dark { background: var(--olive-700); color: var(--beige-50); overflow: hidden; }
+  .dark h2 { color: var(--gold-300); }
+  .dark .bg { position: absolute; inset: 0; background-size: 520px 520px; opacity: .6; }
+  .dark .wrap { position: relative; }
+  .palette { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+  .palette i { width: 54px; height: 54px; border-radius: 50%; border: 2px solid rgba(250,246,238,.75); box-shadow: 0 6px 14px rgba(0,0,0,.25); }
+
+  form { text-align: left; max-width: 460px; margin: 0 auto; display: grid; gap: 20px; }
+  label.f { display: grid; gap: 6px; font-size: 17px; letter-spacing: .06em; color: var(--olive-600); }
+  input[type=text], select, textarea {
+    font: inherit; font-size: 19px; color: var(--olive-800);
+    background: var(--beige-50); border: 1px solid var(--beige-200); border-radius: 12px;
+    padding: 12px 14px; width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold-500); outline-offset: 1px; }
+  fieldset { border: 0; display: grid; gap: 10px; }
+  legend { font-size: 17px; letter-spacing: .06em; color: var(--olive-600); margin-bottom: 8px; }
+  .choice { display: flex; gap: 12px; align-items: center; cursor: pointer; font-size: 19px; }
+  .choice input { accent-color: var(--olive-700); width: 20px; height: 20px; flex: none; }
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+  form .btn { justify-self: center; margin-top: 6px; }
+  .thanks { display: none; font-size: 22px; padding: 30px 10px; }
+  .thanks.show { display: block; }
+
+  footer { padding: 70px 16px 60px; text-align: center; background: var(--olive-800); color: var(--beige-100); }
+  footer .sig { font-family: var(--script); font-size: 44px; color: var(--gold-300); line-height: 1.1; margin-top: 10px; }
+
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 1s ease, transform 1s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .music {
+    position: fixed; right: 16px; bottom: 16px; z-index: 40;
+    width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer;
+    background: var(--olive-700); color: var(--beige-50);
+    box-shadow: 0 8px 20px rgba(0,0,0,.25); display: none; align-items: center; justify-content: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01s !important; }
+  }
+</style>
+</head>
+<body class="locked">
+
+<!-- ================= ENVELOPE ================= -->
+<div class="envelope" id="envelope" aria-label="Конверт с приглашением">
+  <div class="flap-wrap flap-left"><div class="flap"></div></div>
+  <div class="flap-wrap flap-right"><div class="flap"></div></div>
+  <div class="flap-wrap flap-bottom"><div class="flap"></div></div>
+  <div class="flap-wrap flap-top"><div class="flap"></div></div>
+
+  <button class="seal" id="seal" aria-label="Открыть конверт">
+    <svg viewBox="0 0 200 200" aria-hidden="true">
+      <defs>
+        <radialGradient id="wax" cx="38%" cy="32%" r="75%">
+          <stop offset="0" stop-color="#f6ecd4"/>
+          <stop offset=".45" stop-color="#dcc79c"/>
+          <stop offset=".8" stop-color="#b89e6a"/>
+          <stop offset="1" stop-color="#8f7748"/>
+        </radialGradient>
+        <radialGradient id="waxInner" cx="40%" cy="35%" r="70%">
+          <stop offset="0" stop-color="#efe2c3"/>
+          <stop offset=".7" stop-color="#d3bc8d"/>
+          <stop offset="1" stop-color="#b9a06c"/>
+        </radialGradient>
+        <g id="rose">
+          <path d="M0-14c8-2 15 4 14 12s-9 13-16 11-12-8-10-14 6-8 12-6c5 2 6 8 2 10s-7-1-5-4"/>
+          <path d="M-14-2c-6 6-4 16 4 20s18 1 22-6"/>
+          <path d="M-12-10c-4-6 2-12 9-11"/>
+          <path d="M14-6c5 3 6 9 3 14"/>
+        </g>
+      </defs>
+      <path id="sealShape" fill="url(#wax)"/>
+      <circle cx="100" cy="100" r="64" fill="url(#waxInner)"/>
+      <circle cx="100" cy="100" r="64" fill="none" stroke="#9c8352" stroke-width="2.5" opacity=".7"/>
+      <circle cx="100" cy="100" r="58" fill="none" stroke="#fff6df" stroke-width="1" opacity=".6"/>
+      <!-- embossed bouquet: light pass, then dark pass -->
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(100 102) scale(1.22) translate(-100 -102)">
+        <g stroke="#fff7e2" stroke-width="2.2" opacity=".75" transform="translate(-.8,-.8)">
+          <use href="#bouquet"/>
+        </g>
+        <g id="bouquet" stroke="#8f7748" stroke-width="1.8">
+          <use href="#rose" transform="translate(84 88) scale(1.25)"/>
+          <use href="#rose" transform="translate(118 104) scale(1.1) rotate(25)"/>
+          <path d="M100 118 L98 150 M98 140c-8-4-14-2-20 4 8 3 14 1 20-4zM99 132c8-6 15-6 22-2-8 5-15 5-22 2z"/>
+          <path d="M112 76c2-8 8-11 13-8-1 6-7 9-13 8zM112 76c-2 4-2 8 0 12"/>
+          <path d="M70 108c-8 0-13 5-12 11 7 0 11-4 12-11zM70 108c4 2 8 4 12 4"/>
+          <circle cx="128" cy="72" r="2.2"/><circle cx="134" cy="80" r="1.8"/><circle cx="68" cy="80" r="2"/>
+        </g>
+      </g>
+    </svg>
+  </button>
+
+  <div class="env-text">
+    <div class="names">Анна &amp; Михаил</div>
+    <div class="sub">приглашение на свадьбу</div>
+    <div class="hint">нажмите на печать</div>
+  </div>
+</div>
+
+<!-- ================= INVITATION ================= -->
+<main id="top">
+
+  <section class="hero">
+    <div class="bg pattern"></div>
+    <div class="wrap">
+      <div class="pre reveal">Приглашение на свадьбу</div>
+      <h1 class="reveal">Анна<span class="amp">и</span>Михаил</h1>
+      <svg class="divider reveal" viewBox="0 0 180 28" fill="none" stroke="currentColor" stroke-width="1"><path d="M0 14h70M110 14h70"/><path d="M90 4c-6 4-6 16 0 20 6-4 6-16 0-20zM80 14c4-6 16-6 20 0-4 6-16 6-20 0z"/></svg>
+      <div class="date reveal">12 · 06 · 2027</div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"></div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 class="reveal">Дорогие гости!</h2>
+      <p class="lead reveal">Мы рады пригласить вас на&nbsp;самый важный и&nbsp;счастливый день в&nbsp;нашей жизни&nbsp;— день нашей свадьбы. Будем счастливы разделить его с&nbsp;самыми близкими людьми.</p>
+      <svg class="divider reveal" viewBox="0 0 180 28" fill="none" stroke="currentColor" stroke-width="1"><path d="M0 14h70M110 14h70"/><path d="M90 4c-6 4-6 16 0 20 6-4 6-16 0-20zM80 14c4-6 16-6 20 0-4 6-16 6-20 0z"/></svg>
+      <p class="reveal muted" style="letter-spacing:.2em;text-transform:uppercase;font-size:16px">До свадьбы осталось</p>
+      <div class="countdown reveal" id="countdown" aria-live="polite">
+        <div><b id="cd-d">0</b><span>дней</span></div>
+        <div><b id="cd-h">0</b><span>часов</span></div>
+        <div><b id="cd-m">0</b><span>минут</span></div>
+        <div><b id="cd-s">0</b><span>секунд</span></div>
+      </div>
+      <button class="btn ghost reveal" id="addCal" type="button">Добавить в календарь</button>
+    </div>
+  </section>
+
+  <section style="background:var(--beige-50)">
+    <div class="wrap">
+      <h2 class="reveal">Программа дня</h2>
+      <ol class="timeline">
+        <li class="reveal"><time>14:30</time><div><strong>Сбор гостей</strong><p>Приветственные напитки и лёгкие закуски</p></div></li>
+        <li class="reveal"><time>15:00</time><div><strong>Церемония</strong><p>Выездная регистрация в саду</p></div></li>
+        <li class="reveal"><time>16:00</time><div><strong>Фотосессия</strong><p>Общие фото с гостями</p></div></li>
+        <li class="reveal"><time>17:00</time><div><strong>Банкет</strong><p>Ужин, тосты, танцы</p></div></li>
+        <li class="reveal"><time>23:00</time><div><strong>Завершение вечера</strong><p>Торт и праздничный финал</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 class="reveal">Место проведения</h2>
+      <div class="venue-card reveal">
+        <p class="muted" style="letter-spacing:.2em;text-transform:uppercase;font-size:15px">Суббота, 12 июня 2027</p>
+        <h3>Усадьба «Зелёный сад»</h3>
+        <p>Московская область, деревня Пример, ул.&nbsp;Садовая,&nbsp;1</p>
+        <a class="btn" id="mapLink" target="_blank" rel="noopener">Открыть карту</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark">
+    <div class="bg pattern"></div>
+    <div class="wrap">
+      <h2 class="reveal">Дресс-код</h2>
+      <p class="lead reveal">Будем рады, если вы поддержите цветовую гамму нашего праздника в&nbsp;своих нарядах.</p>
+      <div class="palette reveal">
+        <i style="background:#3b4129"></i><i style="background:#69734e"></i><i style="background:#9aa37d"></i><i style="background:#d8ccb2"></i><i style="background:#f3ede1"></i>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 class="reveal">Детали</h2>
+      <p class="lead reveal">Ваши улыбки и&nbsp;тёплые слова&nbsp;— лучший подарок. Если хотите порадовать нас чем-то ещё, мы будем благодарны за&nbsp;вклад в&nbsp;бюджет нашей молодой семьи.</p>
+      <svg class="divider reveal" viewBox="0 0 180 28" fill="none" stroke="currentColor" stroke-width="1"><path d="M0 14h70M110 14h70"/><path d="M90 4c-6 4-6 16 0 20 6-4 6-16 0-20zM80 14c4-6 16-6 20 0-4 6-16 6-20 0z"/></svg>
+      <p class="lead reveal">Просим воздержаться от&nbsp;криков «Горько!»&nbsp;— для нас важнее ваши искренние пожелания.</p>
+    </div>
+  </section>
+
+  <section style="background:var(--beige-50)">
+    <div class="wrap">
+      <h2 class="reveal">Анкета гостя</h2>
+      <p class="lead reveal" style="margin-bottom:30px">Пожалуйста, подтвердите присутствие до&nbsp;1&nbsp;мая 2027</p>
+      <form id="rsvp" class="reveal">
+        <label class="f">Ваше имя и фамилия
+          <input type="text" name="name" required autocomplete="name">
+        </label>
+        <fieldset>
+          <legend>Сможете ли вы прийти?</legend>
+          <label class="choice"><input type="radio" name="attend" value="yes" required> С радостью приду</label>
+          <label class="choice"><input type="radio" name="attend" value="plus"> Приду с парой</label>
+          <label class="choice"><input type="radio" name="attend" value="no"> К сожалению, не смогу</label>
+        </fieldset>
+        <fieldset>
+          <legend>Что предпочитаете пить?</legend>
+          <div class="checks">
+            <label class="choice"><input type="checkbox" name="drinks" value="Вино красное"> Красное вино</label>
+            <label class="choice"><input type="checkbox" name="drinks" value="Вино белое"> Белое вино</label>
+            <label class="choice"><input type="checkbox" name="drinks" value="Шампанское"> Шампанское</label>
+            <label class="choice"><input type="checkbox" name="drinks" value="Крепкое"> Крепкое</label>
+            <label class="choice"><input type="checkbox" name="drinks" value="Безалкогольное"> Безалкогольное</label>
+          </div>
+        </fieldset>
+        <label class="f">Пожелания или аллергии
+          <textarea name="comment" rows="3"></textarea>
+        </label>
+        <button class="btn" type="submit">Отправить</button>
+      </form>
+      <div class="thanks" id="thanks">Спасибо! Ваш ответ получен 🤍<br><span class="muted">Ждём встречи с вами.</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>По всем вопросам — организатор Екатерина<br><a href="tel:+70000000000" style="color:var(--gold-300)">+7 (000) 000-00-00</a></p>
+    <div class="sig">С любовью, Анна и Михаил</div>
+  </footer>
+</main>
+
+<script>
+/* ===== Настройки — меняйте здесь ===== */
+const CONFIG = {
+  date: "2027-06-12T15:00:00+03:00",
+  end:  "2027-06-12T23:00:00+03:00",
+  title: "Свадьба Анны и Михаила",
+  place: "Усадьба «Зелёный сад», Московская область, деревня Пример, ул. Садовая, 1",
+  // Куда отправлять анкету: вставьте URL (Google Apps Script / Formspree и т.п.). Пусто — демо-режим.
+  rsvpEndpoint: ""
+};
+
+/* ===== Floral embossed pattern (generated SVG tile) ===== */
+(function makePattern() {
+  const branch = (x, y, r, s) => `
+    <g transform="translate(${x} ${y}) rotate(${r}) scale(${s})">
+      <path d="M0 0 C 20 -40, 30 -90, 20 -150"/>
+      ${[-20,-45,-70,-95,-120].map((t,i)=>`
+        <path d="M${(i*3).toFixed(1)} ${t} c -22 -4 -36 -18 -38 -34 c 18 2 32 14 38 34 z"/>
+        <path d="M${(i*3+6).toFixed(1)} ${t-10} c 22 -6 34 -22 34 -38 c -18 4 -30 18 -34 38 z"/>`).join("")}
+      <path d="M20 -150 c -6 -10 -2 -20 6 -24 M20 -150 c 8 -8 18 -8 22 -2"/>
+    </g>`;
+  const berries = (x, y, r) => `
+    <g transform="translate(${x} ${y}) rotate(${r})">
+      <path d="M0 0 C 10 -30, 10 -60, 0 -90 M3 -30 c 12 -6 20 -14 22 -24 M5 -55 c -12 -6 -18 -14 -20 -24"/>
+      ${[[25,-56],[22,-62],[29,-62],[-15,-80],[-21,-84],[-14,-87],[0,-94],[6,-98],[-5,-99]].map(([a,b])=>`<circle cx="${a}" cy="${b}" r="3.4"/>`).join("")}
+    </g>`;
+  const flower = (x, y, s) => {
+    let p = "";
+    for (let i = 0; i < 7; i++) {
+      const a = i * 360 / 7;
+      p += `<path transform="rotate(${a})" d="M0 -8 C -16 -22, -14 -44, 0 -48 C 14 -44, 16 -22, 0 -8 Z"/><path transform="rotate(${a})" d="M0 -14 L0 -40"/>`;
+    }
+    return `<g transform="translate(${x} ${y}) scale(${s})">${p}<circle r="9"/><circle r="4"/></g>`;
+  };
+  const art = branch(60, 300, -20, 1.1) + branch(400, 520, 30, 1) + branch(300, 180, 160, .9) +
+              berries(200, 470, 10) + berries(470, 220, -30) + berries(110, 120, 200) +
+              flower(230, 310, 1.05) + flower(470, 40, .8) + flower(30, 510, .7);
+  const tile = (stroke, dx, dy, op) => `<g transform="translate(${dx} ${dy})" stroke="${stroke}" opacity="${op}">${art}</g>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="520" viewBox="0 0 520 520">
+    <g fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      ${tile("#eef3d8", -1.2, -1.2, .22)}
+      ${tile("#1f2414", 1.4, 1.4, .45)}
+    </g></svg>`;
+  const url = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  document.querySelectorAll(".flap, .pattern").forEach(el => el.style.backgroundImage = url);
+})();
+
+/* ===== Wavy wax seal outline ===== */
+(function sealShape() {
+  const pts = [], n = 120;
+  for (let i = 0; i <= n; i++) {
+    const a = i / n * Math.PI * 2;
+    const r = 88 + Math.sin(a * 5 + .6) * 4 + Math.sin(a * 9 + 1.3) * 2.2 + Math.sin(a * 3) * 2;
+    pts.push(`${(100 + Math.cos(a) * r).toFixed(1)},${(100 + Math.sin(a) * r).toFixed(1)}`);
+  }
+  document.getElementById("sealShape").setAttribute("d", "M" + pts.join("L") + "Z");
+})();
+
+/* ===== Open envelope ===== */
+const env = document.getElementById("envelope");
+document.getElementById("seal").addEventListener("click", () => {
+  if (env.classList.contains("open")) return;
+  env.classList.add("open");
+  document.body.classList.remove("locked");
+  window.scrollTo(0, 0);
+  setTimeout(() => env.classList.add("gone"), 1500);
+  revealVisible();
+});
+
+/* ===== Reveal on scroll ===== */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}), { threshold: .15 });
+function revealVisible() { document.querySelectorAll(".reveal").forEach(el => io.observe(el)); }
+
+/* ===== Countdown ===== */
+const target = new Date(CONFIG.date).getTime();
+function tick() {
+  let d = Math.max(0, target - Date.now()) / 1000;
+  const days = Math.floor(d / 86400); d -= days * 86400;
+  const h = Math.floor(d / 3600); d -= h * 3600;
+  const m = Math.floor(d / 60); const s = Math.floor(d - m * 60);
+  document.getElementById("cd-d").textContent = days;
+  document.getElementById("cd-h").textContent = String(h).padStart(2, "0");
+  document.getElementById("cd-m").textContent = String(m).padStart(2, "0");
+  document.getElementById("cd-s").textContent = String(s).padStart(2, "0");
+}
+tick(); setInterval(tick, 1000);
+
+/* ===== Map & calendar ===== */
+document.getElementById("mapLink").href = "https://yandex.ru/maps/?text=" + encodeURIComponent(CONFIG.place);
+document.getElementById("addCal").addEventListener("click", () => {
+  const f = s => new Date(s).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//wedding//ru","BEGIN:VEVENT",
+    "UID:wedding-" + f(CONFIG.date) + "@invite", "DTSTAMP:" + f(new Date().toISOString()),
+    "DTSTART:" + f(CONFIG.date), "DTEND:" + f(CONFIG.end),
+    "SUMMARY:" + CONFIG.title, "LOCATION:" + CONFIG.place.replace(/,/g, "\\,"),
+    "END:VEVENT","END:VCALENDAR"].join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+  a.download = "wedding.ics"; a.click();
+});
+
+/* ===== RSVP ===== */
+document.getElementById("rsvp").addEventListener("submit", async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const data = { name: fd.get("name"), attend: fd.get("attend"), drinks: fd.getAll("drinks").join(", "), comment: fd.get("comment") };
+  if (CONFIG.rsvpEndpoint) {
+    try { await fetch(CONFIG.rsvpEndpoint, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); } catch (_) {}
+  }
+  e.target.style.display = "none";
+  document.getElementById("thanks").classList.add("show");
+});
+</script>
+</body>
+</html>
