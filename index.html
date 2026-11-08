@@ -39,7 +39,7 @@
 
   /* ---------------- ENVELOPE ---------------- */
   .envelope {
-    position: fixed; inset: 0; z-index: 50;
+    position: fixed; inset: 0; z-index: 50; cursor: pointer;
     background: var(--olive-800);
     overflow: hidden;
     perspective: 1600px;
@@ -243,7 +243,7 @@
   <div class="env-text">
     <div class="names">Анна &amp; Михаил</div>
     <div class="sub">приглашение на свадьбу</div>
-    <div class="hint">нажмите на печать</div>
+    <div class="hint">коснитесь печати, чтобы открыть</div>
   </div>
 </div>
 
@@ -421,14 +421,16 @@ const CONFIG = {
 
 /* ===== Open envelope ===== */
 const env = document.getElementById("envelope");
-document.getElementById("seal").addEventListener("click", () => {
+function openEnvelope() {
   if (env.classList.contains("open")) return;
   env.classList.add("open");
   document.body.classList.remove("locked");
   window.scrollTo(0, 0);
   setTimeout(() => env.classList.add("gone"), 1500);
   revealVisible();
-});
+}
+// открывается по нажатию на печать или в любом месте конверта
+env.addEventListener("click", openEnvelope);
 
 /* ===== Reveal on scroll ===== */
 const io = new IntersectionObserver(es => es.forEach(e => {
